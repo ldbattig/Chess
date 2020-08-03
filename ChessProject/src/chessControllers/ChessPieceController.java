@@ -1,4 +1,4 @@
-package chess;
+package chessControllers;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,7 +10,23 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-public class ChessPieces {
+import chessObjects.Move;
+import chessObjects.Square;
+import chessPieces.Bishop;
+import chessPieces.ChessPiece;
+import chessPieces.King;
+import chessPieces.Knight;
+import chessPieces.Pawn;
+import chessPieces.Queen;
+import chessPieces.Rook;
+
+/**
+ * Controller for ChessPiece graphics and high-level movement functionality
+ * Maintains lists of ChessPieces on and off board for gameplay
+ * @author Lorenzo Battigelli
+ *
+ */
+public class ChessPieceController {
 
 	// All initial x and y coordinates (in pixels) for chess pieces
 	private int whiteKingX = 260;
@@ -134,9 +150,6 @@ public class ChessPieces {
 	 */
 	public void paintPieces(Graphics g) {
 		loadPieces();
-		for (int i = 0; i < piecesOn.size(); i++) {
-			
-		}
 		g.drawImage(whiteKing, kW.getXCoord(), kW.getYCoord(), null);
 		g.drawImage(whiteQueen, qW.getXCoord(), qW.getYCoord(), null);
 		g.drawImage(whiteKnightA, kWA.getXCoord(), kWA.getYCoord(), null);
@@ -323,7 +336,7 @@ public class ChessPieces {
 			int xDisplacement = (x2 - x1) * Chess.getSquareDimension();
 			int yDisplacement = (y2 - y1) * Chess.getSquareDimension();
 			a.move(xDisplacement, yDisplacement);
-			Chess.addNewMoveToStack(new Move(a, x1, y1, x2, y2));
+			Chess.addMoveToStack(new Move(a, x1, y1, x2, y2));
 			switchOccupation(x1, y1, x2, y2);
 			updatePieceLists();
 
@@ -344,7 +357,7 @@ public class ChessPieces {
 			int xDisplacement = (x2 - x1) * Chess.getSquareDimension();
 			int yDisplacement = (y2 - y1) * Chess.getSquareDimension();
 			a.move(xDisplacement, yDisplacement);
-			Chess.addNewMoveToStack(new Move(a, x1, y1, x2, y2, b));
+			Chess.addMoveToStack(new Move(a, x1, y1, x2, y2, b));
 			switchOccupation(x1, y1, x2, y2);
 			updatePieceLists();
 			
@@ -460,10 +473,48 @@ public class ChessPieces {
 		}
 	}
 	
-//	public static void putPieceOnBoard(ChessPiece piece) {
-//		piecesOff.remove(piece);
-//		piecesOn.add(piece);
-//	}
+	public static void putPieceOnBoard(ChessPiece piece) {
+		piecesOn.add(piece);
+		
+		// handle graphics for new piece
+	}
+	
+	public void flipBoard() {
+		int max = 7;
+		for (ChessPiece temp: piecesOn) {
+			int newX = max - temp.getXSquare();
+			int newY = max - temp.getYSquare();
+			int xDisplacement = (newX - temp.getXSquare()) * Chess.getSquareDimension();
+			int yDisplacement = (newY - temp.getYSquare()) * Chess.getSquareDimension();
+			String pType = temp.getClass().toString();
+			boolean pHasMoved = true;
+			if (pType.equals("class chess.Rook")) {
+				pHasMoved = ((Rook) temp).getHasMoved();
+			} else if (pType.equals("class chess.Pawn")) {
+				pHasMoved = ((Pawn) temp).getHasMoved();
+			} else if (pType.equals("class chess.King")) {
+				pHasMoved = ((King) temp).getHasMoved();
+			}
+			temp.move(xDisplacement, yDisplacement);
+			//TODO: always sets to false, should only set to false if was previously false
+			switch (pType) {
+			default: break;
+			case ("class chess.King"):
+				if (!pHasMoved)
+				((King) temp).resetHasMoved();
+			break;
+			case ("class chess.Rook"):
+				if (!pHasMoved)
+				((Rook) temp).resetHasMoved();
+			break;
+			case ("class chess.Pawn"):
+				if (!pHasMoved)
+				((Pawn) temp).resetHasMoved();
+				((Pawn) temp).flipMovementDirection();
+			break;
+			}
+		}
+	}
 	
 	public List<ChessPiece> getPiecesOn() {
 		return piecesOn;

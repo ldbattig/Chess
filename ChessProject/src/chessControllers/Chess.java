@@ -1,10 +1,12 @@
-package chess;
+package chessControllers;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -14,16 +16,28 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import chessObjects.ChessBoard;
+import chessObjects.Move;
+import chessObjects.Square;
+import chessPieces.Bishop;
+import chessPieces.ChessPiece;
+import chessPieces.Knight;
+import chessPieces.Pawn;
+import chessPieces.Queen;
+import chessPieces.Rook;
+
 import javax.swing.JOptionPane;
 
 /**
- * Controller for chess game
+ * Controller for chess game. Includes Instances of ChessBoard and ChessPieceController. This class
+ * registers user clicks and processes them through ChessBoard/ChessPieceController
  * @author Lorenzo Battigelli
  *
  */
 public class Chess extends JPanel {
 
-	/** Id declaration to avoid warnings*/
+	/** Id declaration to avoid checkstyle warnings*/
 	private static final long serialVersionUID = 1L;
 	/** Width in pixels of border surrounding chess board */
 	private int borderWidth = 20;
@@ -34,7 +48,7 @@ public class Chess extends JPanel {
 	/** Y dimension in pixels of canvas window */
 	private int canvasDimensionX = getSquareDimension() * 12 + borderWidth * 2;
 	/** Instance of ChessPieces used to display piece graphics */
-	private static ChessPieces pieceGraphics = new ChessPieces();
+	private static ChessPieceController pieceGraphics = new ChessPieceController();
 	/** Instance of ChessBoard used to display board graphics */
 	private static ChessBoard boardGraphics = new ChessBoard();
 	/** 2D array of Squares used to determine piece occupation (boolean) */
@@ -49,16 +63,20 @@ public class Chess extends JPanel {
 	private static Square lastClick;
 	/** Color representing current turn to move */
 	private static Color turn;
+	/** Color representing opposite side (whose turn it isn't) */
 	private static Color oppositeTurn;
 	/** Boolean for whether or not either king is in check */
 	private static boolean check;
+	/** Boolean for debugging (used for printing variables) */
 	public static boolean debug;
-	
+	/** Stack of Moves before the current board position, used for navigating through the game */
 	private static Stack<Move> movesBefore;
+	/** Stack of Moves after the current board position, used for navigating through the game */
 	private static Stack<Move> movesAfter;
+	private static boolean promoting;
 
 	/**
-	 * Constructor - initializes squares, MouseListener, and pieces
+	 * Constructor - initializes all fields, MouseListener, and pieces
 	 */
 	public Chess() {
 		turn = Color.white;
@@ -69,6 +87,7 @@ public class Chess extends JPanel {
 		check = false;
 		movesBefore = new Stack<Move>();
 		movesAfter = new Stack<Move>();
+		promoting = false;
 		debug = true;
 	}
 	
@@ -98,6 +117,12 @@ public class Chess extends JPanel {
 				gameFrame.repaint();
 			}                
 		});
+		flipBoardButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+			    flipBoard();
+			    gameFrame.repaint();
+			  } 
+			} );
 	}
 
 	@Override
@@ -114,13 +139,56 @@ public class Chess extends JPanel {
 	 */
 	private static void mouseClick(int x, int y) {
 		//offsets are used to move origin (0,0) to top left of chess board
-//		printOccupied();
+		printOccupied();
 		x -= 27;
 		y -= 50;
-		System.out.println("xPos: " + x + '\n' + "yPos: " + y);
+	//	System.out.println("xPos: " + x + '\n' + "yPos: " + y);
 		if (x < 0 || x >= 480 || y < 0 || y >= 480)
 			return;
 		Square newSquare = coordToSquare(x, y);
+		if (promoting) {
+			Color orientation = boardGraphics.getOrientation();
+			Color newPieceColor = boardGraphics.getPromotionColor();
+			Square promoSquare = boardGraphics.getPromotionSquare();
+			Square above1 = null, above2 = null, above3 = null, below1 = null, below2 = null, below3 = null;
+			if (newPieceColor.equals(Color.BLACK) && orientation.equals(Color.WHITE) || orientation.equals(Color.BLACK) && newPieceColor.equals(Color.WHITE)) {
+				above1 = squares[promoSquare.getXSquare()][promoSquare.getYSquare() - 1];
+				above2 = squares[promoSquare.getXSquare()][promoSquare.getYSquare() - 2];
+				above3 = squares[promoSquare.getXSquare()][promoSquare.getYSquare() - 3];
+			} else {
+				below1 = squares[promoSquare.getXSquare()][promoSquare.getYSquare() + 1];
+				below2 = squares[promoSquare.getXSquare()][promoSquare.getYSquare() + 2];
+				below3 = squares[promoSquare.getXSquare()][promoSquare.getYSquare() + 3];
+			}
+			char type = ' ';
+			if (newPieceColor.equals(Color.WHITE)) {
+				if (boardGraphics.getOrientation().equals(Color.WHITE)) {
+					if (newSquare.equalsXY(promoSquare)) type = 'k';
+					if (newSquare.equalsXY(below1)) type = 'b';
+					if (newSquare.equalsXY(below2)) type = 'r';
+					if (newSquare.equalsXY(below3)) type = 'q';
+				} else {
+					if (newSquare.equalsXY(promoSquare)) type = 'q';
+					if (newSquare.equalsXY(above1)) type = 'r';
+					if (newSquare.equalsXY(above2)) type = 'b';
+					if (newSquare.equalsXY(above3)) type = 'k';
+				}
+			} else {
+				if (boardGraphics.getOrientation().equals(Color.WHITE)) {
+					if (newSquare.equalsXY(promoSquare)) type = 'q';
+					if (newSquare.equalsXY(above1)) type = 'r';
+					if (newSquare.equalsXY(above2)) type = 'b';
+					if (newSquare.equalsXY(above3)) type = 'k';
+				} else {
+					if (newSquare.equalsXY(promoSquare)) type = 'k';
+					if (newSquare.equalsXY(below1)) type = 'b';
+					if (newSquare.equalsXY(below2)) type = 'r';
+					if (newSquare.equalsXY(below3)) type = 'q';
+				}
+			}
+			promoteReplace(newPieceColor, type);
+			return;
+		}
 		switch(click()) {
 		case 1:
 	//		System.out.println("Click one.");
@@ -136,7 +204,7 @@ public class Chess extends JPanel {
 	//		System.out.println("Click zero.");
 			firstClick = newSquare;
 			highlight(firstClick);
-			if (Chess.debug) printSightSquares(firstClick);
+	//		if (Chess.debug) printSightSquares(firstClick);
 	//		System.out.println("Firstclick x: " + firstClick.getxSquare() + " Firstclick y: " + firstClick.getySquare());
 			break;
 		default:
@@ -192,6 +260,7 @@ public class Chess extends JPanel {
 	 * @return square of said coordinates
 	 */
 	public Square getSquare(int x, int y) {
+		if (x > 7 || y > 7 || x < 0 || y < 0) return null;
 		return squares[x][y];
 	}
 	
@@ -334,7 +403,7 @@ public class Chess extends JPanel {
 	 * @return true if not attacked, false otherwise
 	 */
 	public static boolean notAttacked(int x2, int y2, Color kingColor) {
-		return ChessPieces.notAttacked(x2, y2, kingColor);
+		return ChessPieceController.notAttacked(x2, y2, kingColor);
 	}
 	
 	/**
@@ -343,7 +412,7 @@ public class Chess extends JPanel {
 	 * @return king of passed color
 	 */
 	public static ChessPiece findKing(Color kingColor) {
-		return ChessPieces.findKing(kingColor);
+		return ChessPieceController.findKing(kingColor);
 	}
 	
 	/**
@@ -378,7 +447,7 @@ public class Chess extends JPanel {
 
 	}
 	
-	public static void addNewMoveToStack(Move m) {
+	public static void addMoveToStack(Move m) {
 		movesBefore.push(m);
 		movesAfter.clear();
 	}
@@ -439,6 +508,63 @@ public class Chess extends JPanel {
     {
         JOptionPane.showMessageDialog(null, messageText, titleText, JOptionPane.INFORMATION_MESSAGE);
     }
+	
+	public static void flipBoard() {
+		boardGraphics.flipBoard();
+		pieceGraphics.flipBoard();
+		flipOccupation();
+		pieceGraphics.updatePieceLists();
+	}
+	
+	public static Color getOrientation() {
+		return boardGraphics.getOrientation();
+	}
+	
+	public static void flipOccupation() {
+		boolean[][] oldOcc = new boolean[8][8];
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				oldOcc[i][j] = isOccupied(i, j);
+			}
+		}
+		int max = 7;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				squares[max - i][max - j].setOccupied(oldOcc[i][j]);
+			}
+		}
+		stopHighlight(firstClick);
+//		if (firstClick != null) firstClick = new Square(max - firstClick.getXSquare(), max - firstClick.getYSquare(), firstClick.isOccupied());
+//		if (lastClick != null) lastClick = new Square(max - lastClick.getXSquare(), max - lastClick.getYSquare(), lastClick.isOccupied());
+	}
+	
+	public static void promotePawn(Pawn p) {
+		//open graphic for square cutting into quarters, using letters
+		boardGraphics.promoteSquare(new Square(p.getXSquare(), p.getYSquare(), false), p.getColor());
+		promoting = true;
+		p.removePiece();
+	}
+	
+	public static void promoteReplace(Color c, char type) {
+		ChessPiece newPiece = null;
+		int newX = boardGraphics.getPromotionSquare().getXSquare();
+		int newY = boardGraphics.getPromotionSquare().getYSquare();
+		switch(type) {
+		case ('b'): newPiece = new Bishop(newX, newY, newX * squareDimension, newY * squareDimension, c);
+			break;
+		case ('k'): newPiece = new Knight(newX, newY, newX * squareDimension, newY * squareDimension, c);
+			break;
+		case ('r'): newPiece = new Rook(newX, newY, newX * squareDimension, newY * squareDimension, c);
+			break;
+		case ('q'): newPiece = new Queen(newX, newY, newX * squareDimension, newY * squareDimension, c);
+			break;
+		default:
+			stopHighlight(firstClick);
+			boardGraphics.closePromotionMenu();
+			break;
+		}
+		pieceGraphics.putPieceOnBoard(newPiece);
+	}
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {

@@ -1,9 +1,18 @@
-package chess;
+package chessPieces;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import chessControllers.Chess;
+import chessObjects.Square;
+
+/**
+ * Knight object class. Includes universal behaviors from ChessPiece interface and knight-exclusive 
+ * movement/capturing
+ * @author Lorenzo Battigelli
+ *
+ */
 public class Knight implements ChessPiece {
 
 	/** x component of square array (0-7) */ 
@@ -55,7 +64,6 @@ public class Knight implements ChessPiece {
 		yCoord += yDisplacement;
 		xSquare += (xDisplacement / Chess.getSquareDimension());
 		ySquare += (yDisplacement / Chess.getSquareDimension());
-		updateMoves();
 	}
 
 	@Override

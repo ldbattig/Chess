@@ -1,11 +1,15 @@
-package chess;
+package chessPieces;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import chessControllers.Chess;
+import chessObjects.Square;
+
 /**
- * Pawn object class. Includes universal behaviors from ChessPiece interface and pawn-exclusive movement/capturing
+ * Pawn object class. Includes universal behaviors from ChessPiece interface and pawn-exclusive 
+ * movement/capturing
  * @author Lorenzo Battigelli
  *
  */
@@ -102,7 +106,6 @@ public class Pawn implements ChessPiece {
 		xSquare += (xDisplacement / Chess.getSquareDimension());
 		ySquare += (yDisplacement / Chess.getSquareDimension());
 		hasMoved = true;
-		updateMoves();
 	}
 
 	@Override
@@ -113,7 +116,31 @@ public class Pawn implements ChessPiece {
 	}
 
 	public void promote() {
-		// TODO
+		if (Chess.getOrientation().equals(Color.WHITE)) {
+			if (pieceColor.equals(Color.WHITE)) {
+				if (ySquare == 0) {
+					//promote
+					Chess.promotePawn(this);
+				}
+			} else {
+				if (ySquare == 7) {
+					//promote
+					Chess.promotePawn(this);
+				}
+			}
+		} else {
+			if (pieceColor.equals(Color.WHITE)) {
+				if (ySquare == 7) {
+					//promote
+					Chess.promotePawn(this);
+				}
+			} else {
+				if (ySquare == 0) {
+					//promote
+					Chess.promotePawn(this);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -174,7 +201,15 @@ public class Pawn implements ChessPiece {
 		Square temp = new Square(x2, y2, false);
 		return moveList.contains(temp);
 	}
-
+	
+	public void resetHasMoved() {
+		hasMoved = false;
+	}
+	
+	public void flipMovementDirection() {
+		movementDirection *= -1;
+	}
+	
 	@Override
 	public int getXSquare() {
 		return xSquare;
@@ -207,5 +242,9 @@ public class Pawn implements ChessPiece {
 
 	public boolean getJustMovedTwo() {
 		return justMovedTwo;
+	}
+	
+	public boolean getHasMoved() {
+		return hasMoved;
 	}
 }

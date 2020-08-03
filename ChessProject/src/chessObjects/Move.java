@@ -1,4 +1,8 @@
-package chess;
+package chessObjects;
+
+import chessControllers.Chess;
+import chessControllers.ChessPieceController;
+import chessPieces.ChessPiece;
 
 /**
  * Class representing one move in Chess. Used for check functionality and in tracking game moves
@@ -53,17 +57,24 @@ public class Move {
 		this(piece, from.getXSquare(), from.getYSquare(), to.getXSquare(), to.getYSquare(), null);
 	}
 	
+	/**
+	 * Undoes the most recent move by moving the piece backwards and returning a captured piece to the
+	 * board if applicable
+	 */
 	public void undo() {
 		int xDisplacement = (to.getXSquare() - from.getXSquare()) * Chess.getSquareDimension();
 		int yDisplacement = (to.getYSquare() - from.getYSquare()) * Chess.getSquareDimension();
 		piece.move(-xDisplacement, -yDisplacement);
-		ChessPieces.switchOccupation(to.getXSquare(), to.getYSquare(), from.getXSquare(), from.getYSquare());
+		ChessPieceController.switchOccupation(to.getXSquare(), to.getYSquare(), from.getXSquare(), from.getYSquare());
 		if (captured != null) {
 			captured.move(-600, 0);
 			Chess.setOccupation(captured.getXSquare(), captured.getYSquare(), true);
 		}
 	}
 	
+	/**
+	 * TODO
+	 */
 	public void redo() {
 		int xDisplacement = (to.getXSquare() - from.getXSquare()) * Chess.getSquareDimension();
 		int yDisplacement = (to.getYSquare() - from.getYSquare()) * Chess.getSquareDimension();
@@ -71,14 +82,26 @@ public class Move {
 		//TODO: incomplete
 	}
 	
+	/**
+	 * Returns the moved piece
+	 * @return ChessPiece piece
+	 */
 	public ChessPiece getPiece() {
 		return piece;
 	}
 	
+	/**
+	 * Returns the piece's origin square
+	 * @return Square from
+	 */
 	public Square getFrom() {
 		return from;
 	}
 	
+	/**
+	 * Returns the piece's destination square
+	 * @return Square to
+	 */
 	public Square getTo() {
 		return to;
 	}

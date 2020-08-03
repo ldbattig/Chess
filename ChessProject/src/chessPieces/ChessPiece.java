@@ -1,10 +1,12 @@
-package chess;
+package chessPieces;
 
 import java.awt.Color;
 import java.util.List;
 
+import chessObjects.Square;
+
 /**
- * Interface for universal chess piece methods with behavior described in comments
+ * Interface for universal chess piece behaviors
  * @author Lorenzo Battigelli
  */
 public interface ChessPiece {

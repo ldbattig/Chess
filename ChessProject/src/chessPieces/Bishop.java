@@ -1,9 +1,18 @@
-package chess;
+package chessPieces;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import chessControllers.Chess;
+import chessObjects.Square;
+
+/**
+ * Bishop object class. Includes universal behaviors from ChessPiece interface and bishop-exclusive 
+ * movement/capturing
+ * @author Lorenzo Battigelli
+ *
+ */
 public class Bishop implements ChessPiece {
 
 	/** x component of square array (0-7) */ 
@@ -46,6 +55,7 @@ public class Bishop implements ChessPiece {
 		if (y2 - ySquare == 0) return false;
 		int slope = (x2 - xSquare) / (y2 - ySquare);
 		boolean validSquare = slope == 1 || slope == -1;
+	//	System.out.println(validSquare + " " + !Chess.isOccupied(x2, y2) + " " + !hasTravelIntersections(x2, y2));
 		return validSquare && !Chess.isOccupied(x2, y2) && !hasTravelIntersections(x2, y2);
 	}
 
@@ -63,7 +73,6 @@ public class Bishop implements ChessPiece {
 		yCoord += yDisplacement;
 		xSquare += (xDisplacement / Chess.getSquareDimension());
 		ySquare += (yDisplacement / Chess.getSquareDimension());
-		updateMoves();
 	}
 
 	@Override

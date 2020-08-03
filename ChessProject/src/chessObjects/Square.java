@@ -1,5 +1,10 @@
-package chess;
+package chessObjects;
 
+/**
+ * Object representing a single chess board square by means of x and y coordinates
+ * @author Lorenzo Battigelli
+ *
+ */
 public class Square {
 
 	/** x component of square array (0-7) */
@@ -49,6 +54,16 @@ public class Square {
 	 * Comparison method, compares all square fields
 	 */
 	public boolean equals(Object o) {
+		if (!o.getClass().toString().equals("class chess.Square"))
+			return false;
+		Square other = (Square) o;
+		return other.getXSquare() == xSquare && other.getYSquare() == ySquare && other.isOccupied() == occupied;
+	}
+	
+	/**
+	 * Comparison method, only comparing x and y fields
+	 */
+	public boolean equalsXY(Object o) {
 		if (!o.getClass().toString().equals("class chess.Square"))
 			return false;
 		Square other = (Square) o;

@@ -1,4 +1,4 @@
-package chess;
+package chessObjects;
 
 import java.util.Scanner;
 
