@@ -379,7 +379,7 @@ public class Chess extends JPanel {
 	 */
 	public static void takeTurn() {
 		turn = (turn.equals(Color.WHITE)) ? Color.BLACK: Color.WHITE; 
-		oppositeTurn = (oppositeTurn.equals(Color.WHITE)) ? Color.BLACK: Color.BLACK; 
+		oppositeTurn = (oppositeTurn.equals(Color.WHITE)) ? Color.BLACK: Color.WHITE; 
 	}
 	
 	/**
@@ -462,14 +462,6 @@ public class Chess extends JPanel {
 		if (movesBefore.size() == 0)
 			return;
 		movesAfter.push(movesBefore.pop()).undo();
-	}
-	
-	public static void inCheck() {
-		check = true;
-	}
-	
-	public static void notInCheck() {
-		check = false;
 	}
 	
 	public static boolean kingInCheck(Color kingColor) {

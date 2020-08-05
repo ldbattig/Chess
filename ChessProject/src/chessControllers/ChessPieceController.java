@@ -518,10 +518,6 @@ public class ChessPieceController {
 	}
 	
 	public boolean checkmate() {
-		List<ChessPiece> backup = new ArrayList<ChessPiece>();
-		for (ChessPiece c: piecesOn) {
-			backup.add(c);
-		}
 		int legalMoves = 0;
 		if (kingInCheck(Chess.getTurn())) {
 			for (int i = 0; i < piecesOn.size(); i++) {
@@ -532,15 +528,10 @@ public class ChessPieceController {
 				for (int j = 0; j < 8; j++) {
 					for (int k = 0; k < 8; k++) {
 						if (legalMoves > 0) return false;
-						//TODO: doesn't handle castling or en passant correctly
 						if (movePiece(piecesOn.get(i).getXSquare(),  piecesOn.get(i).getYSquare(), j, k)) {
 							legalMoves++;
 							Chess.lastMove();
 							Chess.takeTurn();
-//							piecesOn.clear();
-//							for (ChessPiece c: backup) {
-//								piecesOn.add(c);
-//							}
 						}
 					}
 				}
