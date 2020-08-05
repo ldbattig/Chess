@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.Stack;
 
 import javax.swing.JButton;
@@ -79,8 +78,8 @@ public class Chess extends JPanel {
 	 * Constructor - initializes all fields, MouseListener, and pieces
 	 */
 	public Chess() {
-		turn = Color.white;
-		oppositeTurn = Color.black;
+		turn = Color.WHITE;
+		oppositeTurn = Color.BLACK;
 		setupSquares();
 		setupClicks();
 		pieceGraphics.populatePieces();
@@ -146,6 +145,7 @@ public class Chess extends JPanel {
 		if (x < 0 || x >= 480 || y < 0 || y >= 480)
 			return;
 		Square newSquare = coordToSquare(x, y);
+	//	System.out.println(getPiece(newSquare).getClass().toString() + isOccupied(newSquare.getXSquare(), newSquare.getYSquare()));
 		if (promoting) {
 			Color orientation = boardGraphics.getOrientation();
 			Color newPieceColor = boardGraphics.getPromotionColor();
@@ -195,7 +195,7 @@ public class Chess extends JPanel {
 	//		System.out.println("Secondclick x: " + newSquare.getxSquare() + " Secondclick y: " + newSquare.getySquare());
 			move(firstClick, newSquare);
 			stopHighlight(firstClick);
-			if (checkmate()) {
+			if (pieceGraphics.checkmate()) {
 				String side = (turn.equals(Color.BLACK)) ? "White": "Black"; 
 				popupMessage(side + " wins.", "Checkmate");
 			}
@@ -378,8 +378,8 @@ public class Chess extends JPanel {
 	 * Flips turn field to be opposite color
 	 */
 	public static void takeTurn() {
-		turn = (turn.equals(Color.WHITE)) ? Color.BLACK: Color.white; 
-		oppositeTurn = (turn.equals(Color.WHITE)) ? Color.white: Color.black; 
+		turn = (turn.equals(Color.WHITE)) ? Color.BLACK: Color.WHITE; 
+		oppositeTurn = (oppositeTurn.equals(Color.WHITE)) ? Color.BLACK: Color.BLACK; 
 	}
 	
 	/**
@@ -480,30 +480,6 @@ public class Chess extends JPanel {
 //		boardGraphics.flashRed(sq);
 //	}
 	
-	public static boolean checkmate() {
-		List<ChessPiece> piecesOnBoard = pieceGraphics.getPiecesOn();
-		List<ChessPiece> backup = piecesOnBoard;
-		int legalMoves = 0;
-		debug = false;
-		if (kingInCheck(turn)) {
-			for (int i = 0; i < piecesOnBoard.size(); i++) {
-				for (int j = 0; j < 8; j++) {
-					for (int k = 0; k < 8; k++) {
-						if (legalMoves > 0) return false;
-						if (pieceGraphics.movePiece(piecesOnBoard.get(i).getXSquare(),  piecesOnBoard.get(i).getYSquare(), j, k)) {
-							legalMoves++;
-							piecesOnBoard = backup;
-							lastMove(); //problem: piecesOn is screwed up after the if
-							takeTurn();
-						}
-					}
-				}
-			}
-		} else legalMoves = -1;
-		debug = true;
-		return legalMoves == 0;
-	}
-	
 	public static void popupMessage(String messageText, String titleText)
     {
         JOptionPane.showMessageDialog(null, messageText, titleText, JOptionPane.INFORMATION_MESSAGE);
@@ -513,7 +489,7 @@ public class Chess extends JPanel {
 		boardGraphics.flipBoard();
 		pieceGraphics.flipBoard();
 		flipOccupation();
-		pieceGraphics.updatePieceLists();
+		ChessPieceController.updatePieceLists();
 	}
 	
 	public static Color getOrientation() {
@@ -563,7 +539,7 @@ public class Chess extends JPanel {
 			boardGraphics.closePromotionMenu();
 			break;
 		}
-		pieceGraphics.putPieceOnBoard(newPiece);
+		ChessPieceController.putPieceOnBoard(newPiece);
 	}
 	
 	public static void main(String[] args) {

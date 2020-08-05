@@ -359,8 +359,11 @@ public class ChessPieceController {
 			a.move(xDisplacement, yDisplacement);
 			Chess.addMoveToStack(new Move(a, x1, y1, x2, y2, b));
 			switchOccupation(x1, y1, x2, y2);
+			piecesOn.remove(b);
+			piecesOff.add(b);
 			updatePieceLists();
-			
+//			System.out.println(Chess.getTurn());
+//			System.out.println(kingInCheck(Chess.getTurn()));
 			if (kingInCheck(Chess.getTurn())) {
 				Chess.lastMove();
 				updatePieceLists();
@@ -368,9 +371,6 @@ public class ChessPieceController {
 //				Chess.flashRed(temp);
 				return false;
 			}
-			
-			piecesOn.remove(b);
-			piecesOff.add(b);
 			if (Chess.debug) System.out.println("Successful capture.");
 			Chess.takeTurn();
 			return true;
@@ -419,7 +419,7 @@ public class ChessPieceController {
 	public static boolean notAttacked(int x2, int y2, Color kingColor) {
 		Square temp = new Square(x2, y2, false);
 		for (int i = 0; i < piecesOn.size(); i++) {
-			if (!piecesOn.get(i).getClass().toString().equals("class chess.King") && piecesOn.get(i).canMove(temp.getXSquare(), temp.getYSquare())
+			if (!piecesOn.get(i).getClass().toString().equals("class chessPieces.King") && piecesOn.get(i).canMove(temp.getXSquare(), temp.getYSquare())
 					&& !piecesOn.get(i).getColor().equals(kingColor))
 				return false;
 		}
@@ -452,7 +452,7 @@ public class ChessPieceController {
 	 */
 	public static ChessPiece findKing(Color kingColor) {
 		for (int i = 0; i < piecesOn.size(); i++) {
-			if (piecesOn.get(i).getClass().toString().equals("class chess.King") && piecesOn.get(i).getColor().equals(kingColor))
+			if (piecesOn.get(i).getClass().toString().equals("class chessPieces.King") && piecesOn.get(i).getColor().equals(kingColor))
 				return piecesOn.get(i);
 		}
 		throw new IllegalArgumentException("Error: cannot find " + kingColor + " king.");
@@ -467,16 +467,17 @@ public class ChessPieceController {
 		return false;
 	}
 	
-	public void updatePieceLists() {
+	public static void updatePieceLists() {
 		for (int i = 0; i < piecesOn.size(); i++) {
 			piecesOn.get(i).updateMoves();
 		}
 	}
 	
 	public static void putPieceOnBoard(ChessPiece piece) {
+		piecesOff.remove(piece);
 		piecesOn.add(piece);
 		
-		// handle graphics for new piece
+		// make new method to handle graphics for new piece (if ChessPieceGraphic is finished/implemented, delete this
 	}
 	
 	public void flipBoard() {
@@ -488,32 +489,64 @@ public class ChessPieceController {
 			int yDisplacement = (newY - temp.getYSquare()) * Chess.getSquareDimension();
 			String pType = temp.getClass().toString();
 			boolean pHasMoved = true;
-			if (pType.equals("class chess.Rook")) {
+			if (pType.equals("class chessPieces.Rook")) {
 				pHasMoved = ((Rook) temp).getHasMoved();
-			} else if (pType.equals("class chess.Pawn")) {
+			} else if (pType.equals("class chessPieces.Pawn")) {
 				pHasMoved = ((Pawn) temp).getHasMoved();
-			} else if (pType.equals("class chess.King")) {
+			} else if (pType.equals("class chessPieces.King")) {
 				pHasMoved = ((King) temp).getHasMoved();
 			}
 			temp.move(xDisplacement, yDisplacement);
 			//TODO: always sets to false, should only set to false if was previously false
 			switch (pType) {
 			default: break;
-			case ("class chess.King"):
+			case ("class chessPieces.King"):
 				if (!pHasMoved)
 				((King) temp).resetHasMoved();
 			break;
-			case ("class chess.Rook"):
+			case ("class chessPieces.Rook"):
 				if (!pHasMoved)
 				((Rook) temp).resetHasMoved();
 			break;
-			case ("class chess.Pawn"):
+			case ("class chessPieces.Pawn"):
 				if (!pHasMoved)
 				((Pawn) temp).resetHasMoved();
 				((Pawn) temp).flipMovementDirection();
 			break;
 			}
 		}
+	}
+	
+	public boolean checkmate() {
+		List<ChessPiece> backup = new ArrayList<ChessPiece>();
+		for (ChessPiece c: piecesOn) {
+			backup.add(c);
+		}
+		int legalMoves = 0;
+		if (kingInCheck(Chess.getTurn())) {
+			for (int i = 0; i < piecesOn.size(); i++) {
+				if (piecesOn.get(i).getColor().equals(Chess.getOppositeTurn())) {
+					if (i == piecesOn.size() - 1) return true;
+					i++;
+				}
+				for (int j = 0; j < 8; j++) {
+					for (int k = 0; k < 8; k++) {
+						if (legalMoves > 0) return false;
+						//TODO: doesn't handle castling or en passant correctly
+						if (movePiece(piecesOn.get(i).getXSquare(),  piecesOn.get(i).getYSquare(), j, k)) {
+							legalMoves++;
+							Chess.lastMove();
+							Chess.takeTurn();
+//							piecesOn.clear();
+//							for (ChessPiece c: backup) {
+//								piecesOn.add(c);
+//							}
+						}
+					}
+				}
+			}
+		} else legalMoves = -1;
+		return legalMoves == 0;
 	}
 	
 	public List<ChessPiece> getPiecesOn() {

@@ -145,7 +145,7 @@ public class ChessBoard {
 	}
 
 	private boolean isInitialColorWhite(Square sq) {
-		return (squareColors.get(sq.getXSquare() + sq.getYSquare() * 8) == 0) ? true : false;
+		return (squareColors.get(sq.getXSquare() + sq.getYSquare() * 7) == 0) ? true : false;
 	}
 
 	private void highlightSquare(Graphics g) {

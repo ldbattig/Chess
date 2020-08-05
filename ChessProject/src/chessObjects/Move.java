@@ -69,7 +69,9 @@ public class Move {
 		if (captured != null) {
 			captured.move(-600, 0);
 			Chess.setOccupation(captured.getXSquare(), captured.getYSquare(), true);
+			ChessPieceController.putPieceOnBoard(captured);
 		}
+		ChessPieceController.updatePieceLists();
 	}
 	
 	/**

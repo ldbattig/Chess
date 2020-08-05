@@ -54,7 +54,7 @@ public class Square {
 	 * Comparison method, compares all square fields
 	 */
 	public boolean equals(Object o) {
-		if (!o.getClass().toString().equals("class chess.Square"))
+		if (!o.getClass().toString().equals("class chessObjects.Square"))
 			return false;
 		Square other = (Square) o;
 		return other.getXSquare() == xSquare && other.getYSquare() == ySquare && other.isOccupied() == occupied;
@@ -64,7 +64,7 @@ public class Square {
 	 * Comparison method, only comparing x and y fields
 	 */
 	public boolean equalsXY(Object o) {
-		if (!o.getClass().toString().equals("class chess.Square"))
+		if (!o.getClass().toString().equals("class chessObjects.Square"))
 			return false;
 		Square other = (Square) o;
 		return other.getXSquare() == xSquare && other.getYSquare() == ySquare && other.isOccupied() == occupied;

@@ -90,11 +90,14 @@ public class Pawn implements ChessPiece {
 		if (!Chess.isOccupied(x2, y2 + movementDirection) || ySquare != ySquareForEnPassant || !(xSquare <= x2 + 1 && xSquare >= x2 - 1))
 			return false;
 		System.out.println("Last x: " + Chess.getLastClick().getXSquare() + ", last y: " + Chess.getLastClick().getYSquare());
+		if (!Chess.getPiece(x2, y2).getClass().toString().equals("class chessPieces.Pawn")) return false;
 		Pawn otherPiece = (Pawn) Chess.getPiece(x2, y2 + movementDirection);
 		boolean thatPawnJustMovedTwo = otherPiece.getJustMovedTwo();
-		boolean belowSquareIsPawn = Chess.getPiece(x2, y2 + movementDirection).getClass().getName().equals("chess.Pawn");
+		boolean belowSquareIsPawn = Chess.getPiece(x2, y2 + movementDirection).getClass().toString().equals("class chessPieces.Pawn");
 		boolean lastMoveSquareX = Chess.getLastClick().getXSquare() == x2;
 		boolean lastMoveSquareY = Chess.getLastClick().getYSquare() == y2 + movementDirection;
+		System.out.println(thatPawnJustMovedTwo + " " + belowSquareIsPawn + " " + lastMoveSquareX + " " + lastMoveSquareY + 
+				" " + !Chess.getPiece(x2, y2 + movementDirection).getColor().equals(pieceColor));
 		return thatPawnJustMovedTwo && belowSquareIsPawn && lastMoveSquareX && lastMoveSquareY && !Chess.getPiece(x2, y2 + movementDirection).getColor().equals(getColor());
 	}
 

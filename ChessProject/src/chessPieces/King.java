@@ -220,7 +220,7 @@ public class King implements ChessPiece {
 				if (x2 > xSquare) { // king side castle
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 - 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 - 1, y2);
-					if (Chess.getPiece(x2 + 1, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 + 1, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 + 1, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -228,7 +228,7 @@ public class King implements ChessPiece {
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 + 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 + 1, y2) && 
 							!Chess.isOccupied(x2 - 1, y2);
-					if (Chess.getPiece(x2 - 2, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 - 2, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 - 2, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -237,7 +237,7 @@ public class King implements ChessPiece {
 				if (x2 < xSquare) { // king side castle
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 + 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 + 1, y2);
-					if (Chess.getPiece(x2 - 1, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 - 1, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 - 1, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -245,7 +245,7 @@ public class King implements ChessPiece {
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 - 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 + 1, y2) && 
 							!Chess.isOccupied(x2 - 1, y2);
-					if (Chess.getPiece(x2 + 2, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 + 2, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 + 2, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -256,7 +256,7 @@ public class King implements ChessPiece {
 				if (x2 > xSquare) { // king side castle
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 - 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 - 1, y2);
-					if (Chess.getPiece(x2 + 1, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 + 1, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 + 1, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -264,7 +264,7 @@ public class King implements ChessPiece {
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 + 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 + 1, y2) && 
 							!Chess.isOccupied(x2 - 1, y2);
-					if (Chess.getPiece(x2 - 2, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 - 2, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 - 2, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -273,7 +273,7 @@ public class King implements ChessPiece {
 				if (x2 < xSquare) { // king side castle
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 + 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 + 1, y2);
-					if (Chess.getPiece(x2 - 1, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 - 1, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 - 1, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}
@@ -281,7 +281,7 @@ public class King implements ChessPiece {
 					squaresNotInCheck = Chess.notAttacked(x2, y2, pieceColor) && Chess.notAttacked(x2 - 1, y2, pieceColor);
 					notOccupied = !Chess.isOccupied(x2, y2) && !Chess.isOccupied(x2 + 1, y2) && 
 							!Chess.isOccupied(x2 - 1, y2);
-					if (Chess.getPiece(x2 + 2, y2).getClass().toString().equals("class chess.Rook")) {
+					if (Chess.getPiece(x2 + 2, y2).getClass().toString().equals("class chessPieces.Rook")) {
 						tempRook = (Rook) Chess.getPiece(x2 + 2, y2);
 						rookNotMoved = tempRook.getHasMoved();
 					}

@@ -67,7 +67,7 @@ public class Queen implements ChessPiece {
 
 	@Override
 	public boolean canCapture(int x2, int y2) {
-				boolean divZero = false;
+		boolean divZero = false;
 		if (y2 - ySquare == 0) divZero = true;
 		int slope = 0;
 		if (!divZero)
